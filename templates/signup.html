@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign up!</title>
+</head>
+<body>
+  <form action="{{ url_for('signup') }}" method="POST">
+    <input type="email" name="email" placeholder="email">
+    <input type="password" name="password" placeholder="password">
+    <input type="submit">
+  </form>
+  {% with messages = get_flashed_messages() %}
+      {% if messages %}
+          <ul style="list-style-type: none">
+              {% for message in messages %}
+                  <li  style="list-style-type: none">{{ message }}</li>
+              {% endfor %}
+          </ul>
+      {% endif %}
+  {% endwith %}
+</body>
+</html>
