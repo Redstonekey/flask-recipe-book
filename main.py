@@ -347,7 +347,7 @@ def signup():
       conn.close()
     except Exception as e:
       print(e)
-      flash('Email already exists')
+      flash(f'Email already exists Error: {e}')
       return redirect(url_for('signup'))
 
     
