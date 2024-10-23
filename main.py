@@ -71,9 +71,6 @@ def init_user_db():
     conn.close()
 
 
-    init_db()  # Datenbank initialisieren, wenn die App gestartet wird
-    init_user_db()
-
 @app.route('/')
 def index():
     if 'email' in session:
