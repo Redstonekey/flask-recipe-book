@@ -9,6 +9,8 @@ __pycache__/
 user/*
 !user/
 
+user.db
+
 # Distribution / packaging
 .Python
 build/
