@@ -56,10 +56,8 @@
             padding: 10px 20px;
             font-size: 16px;
             text-decoration: none;
-<<<<<<< HEAD
+
             display: inline-block;
-=======
->>>>>>> 5ed71d1394b8b139e2ac9fb55517a8e760f6cb0a
         }
         .btn-custom:hover {
             background-color: #ff3b2b;
@@ -120,12 +118,9 @@
                 <h2>{{ rezept[1] }}</h2>
                 <p><strong>Dauer:</strong></p>
                 <p>{{ rezept[4]}}</p>
-<<<<<<< HEAD
                     <a href="{{ url_for('show_rezept', rezept_name=rezept[1]) }}" class="btn btn-custom">Rezept ansehen</a>
-=======
                 <a href="/rezepte/{{ rezept[1] }}" class="btn btn-custom">Mehr erfahren</a>
 
->>>>>>> 5ed71d1394b8b139e2ac9fb55517a8e760f6cb0a
             </div>
             <div class="recipe-image">
                 <img src="/static/Mammut.jpg" alt="Bild von {{ rezept[1] }}">
@@ -135,10 +130,7 @@
         {% endfor %}
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-<<<<<<< HEAD
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-=======
->>>>>>> 5ed71d1394b8b139e2ac9fb55517a8e760f6cb0a
 </body>
 </html>

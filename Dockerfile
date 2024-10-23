@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Use the official Python image as the base image
 FROM python:3.8
 
@@ -21,7 +20,6 @@ EXPOSE 5000
 
 # Define the entry point for the container
 CMD ["flask", "run", "--host=0.0.0.0", "--port=5000"]
-=======
 # Use the official Python image as the base image
 FROM python:3.8
 
@@ -44,4 +42,3 @@ EXPOSE 5000
 
 # Define the entry point for the container
 CMD ["flask", "run", "--host=0.0.0.0", "--port=5000"]
->>>>>>> 5ed71d1394b8b139e2ac9fb55517a8e760f6cb0a
