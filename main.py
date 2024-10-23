@@ -10,6 +10,7 @@ UPLOAD_FOLDER = 'static/uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.secret_key = 'jasdhfjasefoanvjff74809'
 
+
 def init_db():
     conn = sqlite3.connect('rezepte.db')
     cursor = conn.cursor()
@@ -70,6 +71,8 @@ def init_user_db():
     conn.close()
 
 
+    init_db()  # Datenbank initialisieren, wenn die App gestartet wird
+    init_user_db()
 
 @app.route('/')
 def index():
