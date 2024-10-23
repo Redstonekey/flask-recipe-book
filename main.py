@@ -90,7 +90,7 @@ def index():
         conn.close()
 
         return render_template('index.html', rezepte=rezepte_list, rezept_des_tages=rezept_des_tages)
-    return redirect(url_for('login'))
+    return redirect(url_for('signup'))
 
 
 
