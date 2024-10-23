@@ -1,7 +1,3 @@
-<<<<<<< HEAD
+
 Flask==2.3.3
 Werkzeug==2.3.7
-=======
-Flask==2.3.3
-Werkzeug==2.3.7
->>>>>>> 5ed71d1394b8b139e2ac9fb55517a8e760f6cb0a
