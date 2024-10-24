@@ -94,6 +94,8 @@ def index():
 
 @app.route('/android')
 def android_start():
+    if 'email' in session:
+        return redirect(url_for('index'))
     return render_template('android_start.html')
 
 
