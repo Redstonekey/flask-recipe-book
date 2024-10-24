@@ -143,8 +143,7 @@
             const shareWAIcon = document.getElementById('sharewa');
 
             // Allgemeine Teilen-Funktion
-            if (navigator.share) {
-                shareIcon.addEventListener('click', async () => {
+            shareIcon.addEventListener('click', async () => {
                     try {
                         await navigator.share({
                             title: document.title,
@@ -156,21 +155,6 @@
                         console.log('Teilen fehlgeschlagen:', error);
                     }
                 });
-            } else {
-                // Wenn die Web Share API nicht unterstützt wird, Icon verstecken
-                shareIcon.addEventListener('click', async () => {
-                    try {
-                        await navigator.share({
-                            title: document.title,
-                            text: 'Schau dir dieses Rezept an!',
-                            url: window.location.href,
-                        });
-                        console.log('Erfolgreich geteilt!');
-                    } catch (error) {
-                        console.log('Teilen fehlgeschlagen:', error);
-                    }
-                });
-            }
 
             // WhatsApp Teilen-Funktion
             shareWAIcon.addEventListener('click', () => {
