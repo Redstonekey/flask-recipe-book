@@ -10,7 +10,6 @@ UPLOAD_FOLDER = 'static/uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.secret_key = 'jasdhfjasefoanvjff74809'
 
-
 def init_db():
     conn = sqlite3.connect('rezepte.db')
     cursor = conn.cursor()
@@ -93,7 +92,42 @@ def index():
     return redirect(url_for('signup'))
 
 
+@app.route('/create-acc')
+def create_acc_for_admin():
+    email = 'admin@admin.com'
+    password = ADMIN_PASSWORD
 
+    try:
+      conn = sqlite3.connect('user.db') 
+      c = conn.cursor()
+      c.execute(
+          """INSERT INTO user (
+            email,
+            password
+          ) VALUES (?, ?)""",
+          (email, password))
+      conn.commit()
+      conn.close()
+    except Exception as e:
+      print(e)
+      return f'Acc already exists error: {e}'
+    print()
+    print()
+    print()
+    print()
+    print()
+    print()
+    print('Account got created by /create-acc')
+    print()
+    print()
+    print()
+    print()
+    print()
+    print()
+    os.makedirs('user/' + email)
+    init_rezepte_db(email)
+
+    return 'Account creation succsesfull'
 
 
 
