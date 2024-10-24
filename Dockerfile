@@ -41,5 +41,7 @@ ENV FLASK_ENV=production
 # Expose the port Flask runs on
 EXPOSE 5000
 
+VOLUME ["/app/User"]
+VOLUME ["/app/user.db"]
 # Define the entry point for the container
 CMD ["flask", "run", "--host=0.0.0.0", "--port=5000"]
