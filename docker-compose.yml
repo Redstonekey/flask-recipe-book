@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  app:
+    build: .
+    volumes:
+      - user_db:/app/user.db  # This keeps user.db in a named volume
+      - ./User:/app/User      # This mounts the User directory
+    ports:
+      - "5000:5000"
+
+volumes:
+  user_db:  # This defines the named volume
