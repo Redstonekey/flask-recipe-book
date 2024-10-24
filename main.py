@@ -27,7 +27,7 @@ def init_db():
     conn.commit()
     conn.close()
 
-
+# HI!
 
 def init_rezepte_db(email):
     # Erstelle den Ordner für den Benutzer, falls er nicht existiert
