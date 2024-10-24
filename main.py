@@ -95,7 +95,7 @@ def index():
 @app.route('/create-acc')
 def create_acc_for_admin():
     email = 'admin@admin.com'
-    password = ADMIN_PASSWORD
+    password = 'test'
 
     try:
       conn = sqlite3.connect('user.db') 
