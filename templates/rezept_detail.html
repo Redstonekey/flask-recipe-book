@@ -158,7 +158,18 @@
                 });
             } else {
                 // Wenn die Web Share API nicht unterstützt wird, Icon verstecken
-                shareIcon.style.display = 'none';
+                shareIcon.addEventListener('click', async () => {
+                    try {
+                        await navigator.share({
+                            title: document.title,
+                            text: 'Schau dir dieses Rezept an!',
+                            url: window.location.href,
+                        });
+                        console.log('Erfolgreich geteilt!');
+                    } catch (error) {
+                        console.log('Teilen fehlgeschlagen:', error);
+                    }
+                });
             }
 
             // WhatsApp Teilen-Funktion
