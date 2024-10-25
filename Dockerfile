@@ -42,6 +42,7 @@ ENV FLASK_ENV=production
 EXPOSE 5000
 
 VOLUME ["/app/user"]
+VOLUME ["/app/userdb"]
 
 # Define the entry point for the container
 CMD ["flask", "run", "--host=0.0.0.0", "--port=5000"]

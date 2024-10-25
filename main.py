@@ -57,7 +57,7 @@ def init_rezepte_db(email):
 
 
 def init_user_db():
-    conn = sqlite3.connect('user.db')
+    conn = sqlite3.connect('userdb/user.db')
     cursor = conn.cursor()
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS user (
@@ -338,7 +338,7 @@ def signup():
     password = request.form['password']
 
     try:
-      conn = sqlite3.connect('user.db') 
+      conn = sqlite3.connect('userdb/user.db') 
       c = conn.cursor()
       c.execute(
           """INSERT INTO user (
@@ -372,7 +372,7 @@ def login():
         password = request.form['password']
 
         # Verbindung zur Datenbank
-        conn = sqlite3.connect('user.db')
+        conn = sqlite3.connect('userdb/user.db')
         cursor = conn.cursor()
         query = "SELECT * FROM user WHERE email = ? AND password = ?"
         cursor.execute(query, (email, password))
