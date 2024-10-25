@@ -1,14 +1,20 @@
 import os
 import sqlite3
 from werkzeug.utils import secure_filename
-from flask import Flask, redirect, render_template, request, url_for, session, flash, jsonify
+from flask import Flask, redirect, render_template, request, url_for, session, flash, jsonify, abort, send_file, render_template_string
 from sqlite3 import IntegrityError
-
+import tempfile
+import shutil
+import zipfile
 app = Flask(__name__)
 
 UPLOAD_FOLDER = 'static/uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.secret_key = 'jasdhfjasefoanvjff74809'
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__)) 
+
+
+
 
 def init_db():
     conn = sqlite3.connect('rezepte.db')
@@ -388,6 +394,73 @@ def login():
             flash('Email oder Passwort falsch!')
             return render_template('login.html')
     return render_template('login.html')
+
+
+
+
+@app.route('/download', methods=['GET', 'POST'])
+def download():
+    SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+    DATABASE_PATH = os.path.join(SCRIPT_DIR, 'userdb', 'user.db')
+    BILDER_FOLDER = os.path.join(SCRIPT_DIR, 'user')
+    UPLOADS_FOLDER = os.path.join(SCRIPT_DIR, 'static', 'uploads')
+    if request.method == 'POST':
+        password = request.form.get('password')
+        if password == 'TEST_PW':
+            # Create a temporary ZIP file
+            zip_path = os.path.join(tempfile.gettempdir(), 'backup.zip')
+            with zipfile.ZipFile(zip_path, 'w') as backup_zip:
+                # Add the database file to the ZIP
+                if os.path.exists(DATABASE_PATH):
+                    backup_zip.write(DATABASE_PATH, arcname='user.db')
+                else:
+                    return "Database file not found", 404
+                
+                # Add the Bilder folder contents to the ZIP
+                if os.path.exists(BILDER_FOLDER):
+                    for root, _, files in os.walk(BILDER_FOLDER):
+                        for file in files:
+                            file_path = os.path.join(root, file)
+                            arcname = os.path.relpath(file_path, SCRIPT_DIR)  # Preserve folder structure
+                            backup_zip.write(file_path, arcname=arcname)
+
+                # Add the uploads folder contents to the ZIP
+                if os.path.exists(UPLOADS_FOLDER):
+                    for root, _, files in os.walk(UPLOADS_FOLDER):
+                        for file in files:
+                            file_path = os.path.join(root, file)
+                            arcname = os.path.relpath(file_path, SCRIPT_DIR)  # Preserve folder structure
+                            backup_zip.write(file_path, arcname=arcname)
+                else:
+                    return "Uploads folder not found", 404
+
+            # Send the created ZIP file as a downloadable attachment
+            response = send_file(zip_path, as_attachment=True, download_name='backup.zip')
+            response.call_on_close(lambda: os.remove(zip_path))  # Remove the zip file after sending
+            return response
+        else:
+            return "Incorrect password", 403
+
+    # HTML form rendered directly within Flask
+    form_html = """
+    <!DOCTYPE html>
+    <html lang="en">
+    <head><title>Download Backup</title></head>
+    <body>
+        <h2>Enter Password to Download Backup</h2>
+        <form method="POST">
+            <label>Password: <input type="password" name="password"></label>
+            <input type="submit" value="Download">
+        </form>
+    </body>
+    </html>
+    """
+    return render_template_string(form_html)
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
 
 
 
