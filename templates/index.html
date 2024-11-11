@@ -135,7 +135,7 @@
             <h2>Rezept des Tages</h2>
             {% if rezept_des_tages %}
                 {% if rezept_des_tages[5] %}
-                    <img src="{{ url_for('static', filename='uploads/' ~ rezept_des_tages[5]) }}" alt="Bild von {{ rezept_des_tages[1] }}">
+                <img src="{{ url_for('serve_image', email=session['email'], filename=rezept_des_tages[5]) }}" alt="Bild von {{ rezept_des_tages[1] }}">
                 {% endif %}
                 <h3>{{ rezept_des_tages[1] }}</h3>
                 <p>Dauer: {{ rezept_des_tages[4] }}</p>
@@ -151,7 +151,7 @@
             {% for rezept in rezepte %}
             <div class="card">
                 {% if rezept[5] %}
-                <img src="{{ url_for('static', filename='uploads/' ~ rezept[5]) }}" alt="Bild von {{ rezept[1] }}">
+                <img src="{{ url_for('serve_image', email=session['email'], filename=rezept[5]) }}" alt="Bild von {{ rezept[1] }}">
                 {% endif %}
                 <div class="card-body">
                     <h5 class="card-title">{{ rezept[1] }}</h5>

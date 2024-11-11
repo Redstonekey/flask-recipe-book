@@ -1,7 +1,7 @@
 import os
 import sqlite3
 from werkzeug.utils import secure_filename
-from flask import Flask, redirect, render_template, request, url_for, session, flash, jsonify, abort, send_file, render_template_string
+from flask import Flask, send_from_directory, abort, redirect, render_template, request, url_for, session, flash, jsonify, abort, send_file, render_template_string
 from sqlite3 import IntegrityError
 import tempfile
 import shutil
@@ -192,6 +192,19 @@ def add():
     return redirect(url_for('login'))
 
 
+@app.route('/user/<email>/bilder/<filename>')
+def serve_image(email, filename):
+    # Sicherstellen, dass der Benutzer authentifiziert ist und auf sein eigenes Bild zugreift
+    if 'email' not in session or session['email'] != email:
+        abort(403)  # Forbidden - Wenn der Benutzer nicht eingeloggt ist oder das Bild eines anderen Benutzers anfordert
+
+    image_path = os.path.join(f'user/{email}/bilder', filename)
+    
+    # Prüfen, ob die Bilddatei existiert
+    if os.path.exists(image_path):
+        return send_from_directory(os.path.dirname(image_path), filename)
+    
+    return "Bild nicht gefunden", 404
 
 
 @app.route('/submit_send', methods=['POST'])
@@ -209,6 +222,9 @@ def submit_send():
         bild_name = None
         if bild and bild.filename:
             bild_name = secure_filename(bild.filename)
+            UPLOAD_FOLDER = os.path.join(f'user/{email}', 'bilder')
+            if not os.path.exists(UPLOAD_FOLDER):
+                os.makedirs(UPLOAD_FOLDER)
             bild_path = os.path.join(UPLOAD_FOLDER, bild_name)
             bild.save(bild_path)
 

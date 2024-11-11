@@ -124,8 +124,10 @@
             <h2>Dauer: {{rezept[4]}}</h2>
             <br>
             {% if rezept[5] %}
-                <img src="{{ url_for('static', filename='uploads/' ~ rezept[5]) }}" alt="Bild von {{ rezept[1] }}">
+            <img src="{{ url_for('serve_image', email=session['email'], filename=rezept[5]) }}" alt="Bild von {{ rezept[1] }}">
             {% endif %}
+        
+        
 
 
 
