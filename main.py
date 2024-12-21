@@ -212,6 +212,10 @@ def check_public(rezept_name):
                 return render_template('rezept_detail.html', rezept=recipe, public=True, uuid=public_recipe[0])
             else:
                 add_public_rezept_ignore_duplicates(rezept_name)
+                conn = sqlite3.connect('public_rezepte.db')
+                cursor = conn.cursor()
+                cursor.execute('SELECT * FROM PublicRezepte WHERE name = ? AND user_email = ?', (recipe[1], email))
+                public_recipe = cursor.fetchone()
                 return render_template('rezept_detail.html', rezept=recipe, public=True, uuid=public_recipe[0])
         return jsonify({'error': 'Recipe not found in public database'}), 404
     return redirect(url_for('login'))
