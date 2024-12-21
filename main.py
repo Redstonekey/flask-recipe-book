@@ -210,7 +210,7 @@ def check_public(rezept_name):
 
             if public_recipe:
                 return render_template('rezept_detail.html', rezept=recipe, public=True, uuid=public_recipe[0])
-            else :
+            else:
                 add_public_rezept_ignore_duplicates(rezept_name)
                 return render_template('rezept_detail.html', rezept=recipe, public=True, uuid=public_recipe[0])
         return jsonify({'error': 'Recipe not found in public database'}), 404
