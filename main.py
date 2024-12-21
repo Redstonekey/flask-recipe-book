@@ -527,6 +527,19 @@ def setdbup():
 
     return 'DB set up'
 
+@app.route('/health', methods=['GET'])
+def health_check():
+    try:
+        # Get all files in the specified directory
+        files = os.listdir(FILES_DIRECTORY)
+        
+        # Prepare a JSON response
+        response = {"files": files}
+        return jsonify(response), 200
+    except FileNotFoundError:
+        return jsonify({"error": "Directory not found"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 @app.route("/signup", methods=['GET', 'POST'])
