@@ -56,6 +56,56 @@ def init_public_rezepte_db():
 
 # HI!
 
+
+
+
+
+def add_public_rezept_ignore_duplicates(rezept_name):
+    if 'email' in session:
+        email = session.get('email')
+        db_path = os.path.join(f'user/{email}/', 'rezepte.db')
+
+        conn = sqlite3.connect(db_path)
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM Rezepte WHERE name = ?', (rezept_name,))
+        recipe = cursor.fetchone()
+        conn.close()
+
+        if recipe:
+            conn = sqlite3.connect('public_rezepte.db')
+            cursor = conn.cursor()
+            cursor.execute('SELECT * FROM PublicRezepte WHERE name = ? AND user_email = ?', (recipe[1], email))
+            public_recipe = cursor.fetchone()
+
+            public_uuid = str(uuid.uuid4())
+            public_recipe = (
+                public_uuid,
+                recipe[1],  # name
+                recipe[2],  # zutaten
+                recipe[3],  # rezept
+                recipe[4],  # dauer
+                recipe[5],  # bild
+                email       # user_email
+            )
+
+            # Copy the image to the public pictures folder
+            if recipe[5]:
+                src = os.path.join(SCRIPT_DIR, 'user', f'{email}', 'bilder', recipe[5])
+                dst = os.path.join(PUBLIC_PICTURES_FOLDER, f"{public_uuid}.jpg")
+                shutil.copy(src, dst)
+                public_recipe = public_recipe[:-2] + (f"public-pictures/{public_uuid}.jpg", email)
+
+            cursor.execute('INSERT INTO PublicRezepte (uuid, name, zutaten, rezept, dauer, bild, user_email) VALUES (?, ?, ?, ?, ?, ?, ?)', public_recipe)
+            conn.commit()
+            conn.close()
+            return jsonify({'uuid': public_uuid}), 201
+        else:
+            return "Recipe not found", 404
+
+
+
+
+
 def init_rezepte_db(email):
     # Erstelle den Ordner für den Benutzer, falls er nicht existiert
     user_folder = f"user/{email}/"
@@ -128,7 +178,7 @@ def get_public_recipe(uuid):
     if recipe:
         # print(recipe)
         # return 'hi'
-        return jsonify({
+        return render_template('rezept_detail_public.html', recipe={
             'uuid': recipe[0],
             'name': recipe[1],
             'zutaten': recipe[2],
@@ -138,6 +188,33 @@ def get_public_recipe(uuid):
         })
     else:
         abort(404)
+
+@app.route('/check-public/<rezept_name>')
+def check_public(rezept_name):
+    if 'email' in session:
+        email = session.get('email')
+        print(email)
+        db_path = os.path.join(f'user/{email}/', 'rezepte.db')
+
+        conn = sqlite3.connect(db_path)
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM Rezepte WHERE name = ?', (rezept_name,))
+        recipe = cursor.fetchone()
+        conn.close()
+
+        if recipe:
+            conn = sqlite3.connect('public_rezepte.db')
+            cursor = conn.cursor()
+            cursor.execute('SELECT * FROM PublicRezepte WHERE name = ? AND user_email = ?', (recipe[1], email))
+            public_recipe = cursor.fetchone()
+
+            if public_recipe:
+                return render_template('rezept_detail.html', rezept=recipe, public=True, uuid=public_recipe[0])
+            else :
+                add_public_rezept_ignore_duplicates(rezept_name)
+                return render_template('rezept_detail.html', rezept=recipe, public=True, uuid=public_recipe[0])
+        return jsonify({'error': 'Recipe not found in public database'}), 404
+    return redirect(url_for('login'))
 
 @app.route('/add-public/<rezept_name>')
 def add_public_rezept(rezept_name):
@@ -158,7 +235,7 @@ def add_public_rezept(rezept_name):
             public_recipe = cursor.fetchone()
 
             if public_recipe:
-                return jsonify({'error': 'Recipe already exists in public database'}), 409
+                return jsonify({'error': 'Recipe already exists in public database', 'uuid': public_recipe[0]}), 409
 
             public_uuid = str(uuid.uuid4())
             public_recipe = (
