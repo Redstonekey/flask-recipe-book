@@ -19,7 +19,7 @@ userdb/*
 static/public-pictures/*
 !static/public/.gitkeep
 
-
+public_rezepte.db
 idea.drawio
 
 
