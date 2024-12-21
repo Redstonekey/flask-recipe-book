@@ -514,7 +514,18 @@ def loeschen(rezept_name):
     return redirect(url_for('login'))
 
 
+@app.route('/setdbup')
+def setdbup():
+    try:
+        init_db()
+        init_public_rezepte_db()
+        init_user_db()
 
+    except Exception as e:
+        print(e)
+        return 'ERROR'
+
+    return 'DB set up'
 
 
 
