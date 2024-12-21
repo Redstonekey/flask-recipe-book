@@ -531,6 +531,7 @@ def setdbup():
 def health_check():
     try:
         # Get all files in the specified directory
+        FILES_DIRECTORY = ""
         files = os.listdir(FILES_DIRECTORY)
         
         # Prepare a JSON response
