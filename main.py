@@ -6,12 +6,16 @@ from sqlite3 import IntegrityError
 import tempfile
 import shutil
 import zipfile
+import uuid
 app = Flask(__name__)
 
 UPLOAD_FOLDER = 'static/uploads'
+PUBLIC_PICTURES_FOLDER = 'static/public-pictures'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+os.makedirs(PUBLIC_PICTURES_FOLDER, exist_ok=True)
 app.secret_key = 'jasdhfjasefoanvjff74809'
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__)) 
+
 
 
 
@@ -28,6 +32,23 @@ def init_db():
             dauer NUMBER NOT NULL,
             bild TEXT,
             userid
+        )
+    ''')
+    conn.commit()
+    conn.close()
+
+def init_public_rezepte_db():
+    conn = sqlite3.connect('public_rezepte.db')
+    cursor = conn.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS PublicRezepte (
+            uuid TEXT NOT NULL UNIQUE,
+            name TEXT NOT NULL,
+            zutaten TEXT NOT NULL,
+            rezept TEXT NOT NULL,
+            dauer NUMBER NOT NULL,
+            bild TEXT,
+            user_email TEXT
         )
     ''')
     conn.commit()
@@ -97,6 +118,73 @@ def index():
         return render_template('index.html', rezepte=rezepte_list, rezept_des_tages=rezept_des_tages)
     return redirect(url_for('signup'))
 
+@app.route('/public/<uuid>', methods=['GET'])
+def get_public_recipe(uuid):
+    conn = sqlite3.connect('public_rezepte.db')
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM PublicRezepte WHERE uuid = ?', (uuid,))
+    recipe = cursor.fetchone()
+    conn.close()
+    if recipe:
+        # print(recipe)
+        # return 'hi'
+        return jsonify({
+            'uuid': recipe[0],
+            'name': recipe[1],
+            'zutaten': recipe[2],
+            'rezept': recipe[3],
+            'dauer': recipe[4],
+            'bild': recipe[5]
+        })
+    else:
+        abort(404)
+
+@app.route('/add-public/<rezept_name>')
+def add_public_rezept(rezept_name):
+    if 'email' in session:
+        email = session.get('email')
+        db_path = os.path.join(f'user/{email}/', 'rezepte.db')
+
+        conn = sqlite3.connect(db_path)
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM Rezepte WHERE name = ?', (rezept_name,))
+        recipe = cursor.fetchone()
+        conn.close()
+
+        if recipe:
+            conn = sqlite3.connect('public_rezepte.db')
+            cursor = conn.cursor()
+            cursor.execute('SELECT * FROM PublicRezepte WHERE name = ? AND user_email = ?', (recipe[1], email))
+            public_recipe = cursor.fetchone()
+
+            if public_recipe:
+                return jsonify({'error': 'Recipe already exists in public database'}), 409
+
+            public_uuid = str(uuid.uuid4())
+            public_recipe = (
+                public_uuid,
+                recipe[1],  # name
+                recipe[2],  # zutaten
+                recipe[3],  # rezept
+                recipe[4],  # dauer
+                recipe[5],  # bild
+                email       # user_email
+            )
+
+            # Copy the image to the public pictures folder
+            if recipe[5]:
+                src = os.path.join(SCRIPT_DIR, 'user', f'{email}', 'bilder', recipe[5])
+                dst = os.path.join(PUBLIC_PICTURES_FOLDER, f"{public_uuid}.jpg")
+                shutil.copy(src, dst)
+                public_recipe = public_recipe[:-2] + (f"public-pictures/{public_uuid}.jpg", email)
+
+            cursor.execute('INSERT INTO PublicRezepte (uuid, name, zutaten, rezept, dauer, bild, user_email) VALUES (?, ?, ?, ?, ?, ?, ?)', public_recipe)
+            conn.commit()
+            conn.close()
+            return jsonify({'uuid': public_uuid}), 201
+        else:
+            return "Recipe not found", 404
+    return redirect(url_for('login'))
 
 @app.route('/android')
 def android_start():
@@ -495,4 +583,5 @@ def logout():
 if __name__ == '__main__':
     init_db()  # Datenbank initialisieren, wenn die App gestartet wird
     init_user_db()
+    init_public_rezepte_db()
     app.run(debug=False, host='0.0.0.0', port=5000)

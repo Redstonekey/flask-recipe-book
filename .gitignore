@@ -13,6 +13,16 @@ __pycache__/
 user/*
 !user/
 
+userdb/*
+!userdb/.gitkeep
+
+static/public-pictures/*
+!static/public/.gitkeep
+
+public_rezepte.db
+idea.drawio
+
+
 
 # Distribution / packaging
 .Python
