@@ -529,16 +529,18 @@ def setdbup():
 
 @app.route('/health', methods=['GET'])
 def health_check():
+    all_files = []
     try:
-        # Get all files in the specified directory
-        FILES_DIRECTORY = "/"
-        files = os.listdir(FILES_DIRECTORY)
+        FILES_DIRECTORY = '/'
+        # Walk through the directory and its subdirectories
+        for root, dirs, files in os.walk(FILES_DIRECTORY):
+            for file in files:
+                # Get the full path of the file and append it to the list
+                all_files.append(os.path.join(root, file))
         
-        # Prepare a JSON response
-        response = {"files": files}
+        # Prepare a JSON response with all files
+        response = {"files": all_files}
         return jsonify(response), 200
-    except FileNotFoundError:
-        return jsonify({"error": "Directory not found"}), 404
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
