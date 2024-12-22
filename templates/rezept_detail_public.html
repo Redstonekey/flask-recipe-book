@@ -126,8 +126,16 @@
                 <i id="sharewa" class="bi bi-whatsapp" style="font-size: 40px;padding-right: 3px"></i>
                 <i id="shareIcon" class="bi bi-share"style="font-size: 40px;padding-left: 3px"></i>
             </div>
+
             <div class="text-center">
-                <a href="{{ url_for('rezepte_slash') }}" class="btn btn-custom">Abbrechen</a>
+                <form action="{{ url_for('submit_send') }}" method="post" style="display: inline;">
+                    <input type="hidden" id="name" name="name" class="form-control" value="{{ recipe.name }}" required>
+                    <input type="hidden" id="zutaten" name="zutaten" class="form-control" value="{{ recipe.zutaten }}" required>
+                    <textarea id="rezept" name="rezept" class="form-control" rows="5" required style="visibility: hidden;">{{ recipe.rezept }}</textarea>
+                    <input type="hidden" id="dauer" name="dauer" class="form-control" value="{{ recipe.dauer }}" required>
+                    <input type="hidden" id="bild_url" name="bild_url" value="{{ url_for('static', filename=recipe.bild) }}">
+                    <button type="submit" class="btn btn-custom">Zu meinem Rezeptebuch hinzufügen</button>
+                </form>
             </div>
         </div>
     </div>
