@@ -1,0 +1,18 @@
+.language-selector {
+    position: fixed!important;
+    top: 10px!important;
+    right: 10px!important;
+    background-color: rgba(0, 0, 0, 0.7)!important;
+    color: #fff!important;
+    padding: 10px!important;
+    border-radius: 5px!important;
+    z-index: 1000!important;
+}
+
+.language-selector select {
+    background-color: #fff!important;
+    color: #000!important;
+    border: none!important;
+    padding: 5px!important;
+    border-radius: 5px!important;
+}

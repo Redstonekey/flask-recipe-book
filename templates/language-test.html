@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Language Selector</title>
+</head>
+<body>
+  <div class="language-selector">
+    <label for="language">Language:</label>
+    <select id="language">
+        <option value="english">English</option>
+        <option value="german">Deutsch</option>
+    </select>
+  </div>
+
+  <script>
+    // Function to set a cookie
+    function setCookie(name, value, days) {
+      let expires = "";
+      if (days) {
+        const date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toUTCString();
+      }
+      document.cookie = name + "=" + (value || "") + expires + "; path=/";
+    }
+
+    // Function to get a cookie
+    function getCookie(name) {
+      const nameEQ = name + "=";
+      const ca = document.cookie.split(';');
+      for (let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+      }
+      return null;
+    }
+
+    // Function to handle language selection
+    function handleLanguageChange() {
+      const selectedLanguage = document.getElementById('language').value;
+      setCookie('selectedLanguage', selectedLanguage, 7); // Save the selected language for 7 days
+    }
+
+    // Function to initialize the language selector
+    function initializeLanguageSelector() {
+      const savedLanguage = getCookie('selectedLanguage');
+      if (savedLanguage) {
+        document.getElementById('language').value = savedLanguage;
+      }
+      document.getElementById('language').addEventListener('change', handleLanguageChange);
+    }
+
+    // Initialize the language selector on page load
+    window.onload = initializeLanguageSelector;
+  </script>
+</body>
+</html>

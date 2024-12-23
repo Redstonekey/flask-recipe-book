@@ -385,10 +385,9 @@ def submit_send():
         zutaten = request.form['zutaten']
         rezept = request.form['rezept']
         dauer = 'ca. ' + request.form['dauer'] + ' Minuten'
-        
+
         # Bildverarbeitung
         bild = request.files.get('bild')
-        bild_url = request.form.get('bild_url')
         bild_name = None
         if bild and bild.filename:
             bild_name = secure_filename(bild.filename)
@@ -397,20 +396,17 @@ def submit_send():
                 os.makedirs(UPLOAD_FOLDER)
             bild_path = os.path.join(UPLOAD_FOLDER, bild_name)
             bild.save(bild_path)
-        elif bild_url:
-            bild_name = os.path.basename(bild_url)
-            UPLOAD_FOLDER = os.path.join(f'user/{email}', 'bilder')
-            if not os.path.exists(UPLOAD_FOLDER):
-                os.makedirs(UPLOAD_FOLDER)
-            bild_path = os.path.join(UPLOAD_FOLDER, bild_name)
-            public_bild_path = os.path.join('static/public-pictures', bild_name)
-            shutil.copy(public_bild_path, bild_path)
 
         # Rezeptnamen formatieren
         formatted_name = name.lower()
 
         try:
+
             # Daten in die Datenbank einfügen
+
+            db_path = os.path.join( f'user/{email}/', 'rezepte.db')
+            conn = sqlite3.connect(db_path)
+
             db_path = os.path.join(f'user/{email}/', 'rezepte.db')
             conn = sqlite3.connect(db_path)
             cursor = conn.cursor()
@@ -572,15 +568,22 @@ def signup():
       conn.close()
     except Exception as e:
       print(e)
-      flash(f'Email already exists Error: {e}')
+      flash(f'Email already exists!')
       return redirect(url_for('signup'))
 
     
-    print(email + ' ' +password)
-    os.makedirs('user/' + email)
-    init_rezepte_db(email)
-    session['email'] = email
-    return redirect(url_for('index'))
+    print(email, password)
+    try:
+        os.makedirs('user/' + email)
+        init_rezepte_db(email)
+    except Exception as e:
+        print(e)
+        flash(f'Email already exists!')
+    
+
+
+    
+    return redirect(url_for('login'))
   return render_template('signup.html')
 
 
