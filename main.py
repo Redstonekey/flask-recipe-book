@@ -581,9 +581,8 @@ def signup():
         flash(f'Email already exists!')
     
 
-
-    
-    return redirect(url_for('login'))
+    session['email'] = email
+    return redirect(url_for('index'))
   return render_template('signup.html')
 
 
